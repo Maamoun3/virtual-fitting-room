@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -9,10 +10,18 @@
 
 	<body>
 		
-		<div id="info">BodyVisualiser for Valentina Project</div>
+		<div id="info">BodyVisualiser for VFR Project</div>
 		<div id="info"><a href="index.html">Switch to male body.</a></div>
         <div id="info"><a href="female.html">Switch to female body.</a></div>
 		<div id="container"></div>
+
+		<div id="controls">
+			<button class="btn" onclick="displaySize('T-Shirt or Shirt', 'M')">T-Shirts or Shirts</button>
+			<button class="btn" onclick="displaySize('Pants or Trousers', 'L')">Pants or Trousers</button>
+			<button class="btn" onclick="displaySize('Jackets or Coats', 'XL')">Jackets or Coats</button>
+			<button class="btn" onclick="displaySize('Suits', 'M')">Suits</button>
+			<div id="sizeDisplay">Select an item</div>
+		</div>
 		
 		<script src="js/three.js"></script>
 		
@@ -45,6 +54,24 @@
 			var clock = new THREE.Clock();
 			
 			var gui, skinConfig, morphConfig;
+
+			var height = 160;             const HEIGHTDIFF = 80;
+			var chest = 97;               const CHESTDIFF = 31;
+			var neck = 37;                const NECKDIFF = 10;
+			var neckHeight = 12;          const NECKHEIGHTDIFF = 6;
+			var shoulders = 13;           const SHOULDERSDIFF = 4;
+			var shoulderSlope = 1;        const SHOULDERSLOPEDIFF = 2;
+			var bustGirth = 86;           const BUSTGIRTHDIFF = 17;
+			var stomachForm = 1;          const STOMACHFORMDIFF = 2;
+			var waist = 77;               const WAISTDIFF = 20;
+			var armLength = 26;           const ARMLENGTHDIFF = 10;
+			var upperArmGirth = 15;       const UPPERARMGIRTHDIFF = 10;
+			var wrist = 16;               const WRISTDIFF = 8;
+			var hipGirth = 112;           const HIPGIRTHDIFF = 28;
+			var hipHeight = 36;           const HIPHEIGHTDIFF = 19;
+			var thighGirth = 42;          const THIGHGIRTHDIFF = 10;
+			var lowerLegLength = 38;      const LOWERLEGLENGTHDIFF = 14;
+			var calf = 55;                const CALFDIFF = 16;
 				
 			
          
@@ -106,6 +133,91 @@
 
 			}
 			
+			function displaySize(type, size) {
+
+				if (!character.root || !character.root.children[0] || !character.root.children[0].morphTargetInfluences) {
+					console.error("Mesh or morph targets not loaded yet.");
+					return;
+				}
+
+				var mesh = character.root.children[0];
+
+				console.log("Morph Target Influences:", mesh.morphTargetInfluences);
+
+				if(type==="T-Shirt or Shirt"){
+					chest = 70 + mesh.morphTargetInfluences[5] * CHESTDIFF;
+					bustGirth = 60 + mesh.morphTargetInfluences[6] * BUSTGIRTHDIFF;
+					shoulders = 10 + mesh.morphTargetInfluences[3] * SHOULDERSDIFF;
+					waist = 59 + mesh.morphTargetInfluences[10] * WAISTDIFF;
+
+					console.log(chest);
+
+					if (chest === undefined || bustGirth === undefined || shoulders === undefined || waist === undefined) {
+						console.error("One or more morph target values are undefined.");
+						return;
+					}
+
+					var measurement = (0.5 * chest) + (0.2 * shoulders) + (0.1 * waist) + (0.2 * bustGirth);
+
+
+					let iize;
+
+					if (measurement >= 24 && measurement <= 46) {
+						iize = "XS";
+					} else if (measurement >= 47 && measurement <= 65) {
+						iize = "S";
+					} else if (measurement >= 66 && measurement <= 84) {
+						iize = "M";
+					} else if (measurement >= 85 && measurement <= 98) {
+						iize = "L";
+					} else if (measurement >= 99 && measurement <= 122) {
+						iize = "XL";
+					} else if (measurement >= 123 && measurement <= 130) {
+						iize = "XXL";
+					} else {
+						iize = "Unknown";
+					}
+
+					document.getElementById('sizeDisplay').innerText = `${type} - Size: ${iize}`;
+					}
+
+					else if(type==="Pants or Trousers"){
+					waist = 77 + mesh.morphTargetInfluences[8] * CHESTDIFF;
+					hipGirth = 112 + mesh.morphTargetInfluences[12] * BUSTGIRTHDIFF;
+					thighGirth = 42 + mesh.morphTargetInfluences[14] * SHOULDERSDIFF;
+					lowerLegLength = 38 + mesh.morphTargetInfluences[15] * WAISTDIFF;
+
+					console.log(chest);
+
+					if (chest === undefined || bustGirth === undefined || shoulders === undefined || waist === undefined) {
+						console.error("One or more morph target values are undefined.");
+						return;
+					}
+
+					var measurement = (0.5 * waist) + (0.3 * hipGirth) + (0.1 * thighGirth) + (0.1 * lowerLegLength);
+
+
+					let iize;
+
+					if (measurement >= 24 && measurement <= 36) {
+						iize = "XS";
+					} else if (measurement >= 37 && measurement <= 48) {
+						iize = "S";
+					} else if (measurement >= 49 && measurement <= 62) {
+						iize = "M";
+					} else if (measurement >= 63 && measurement <= 75) {
+						iize = "L";
+					} else if (measurement >= 76 && measurement <= 89) {
+						iize = "XL";
+					} else if (measurement >= 90 && measurement <= 110) {
+						iize = "XXL";
+					} else {
+						iize = "To be continued";
+					}
+
+					document.getElementById('sizeDisplay').innerText = `${type} - Size: ${iize}`;
+					}
+				}
 		
 			
 			function setupMorphsGUI() {
